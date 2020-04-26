@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 public class MyToys {
     
     public static boolean checkString(String input, String format, int maxLength){
-        input.trim();
+        input = input.trim();
         int lengthOfCode = input.length();
         if(input.isEmpty() || lengthOfCode == 0 || lengthOfCode > maxLength || !input.matches(format)){
             return false;

@@ -10,10 +10,10 @@ package dto;
  * @author TruongTN
  */
 public class SupplierDTO {
-    public String supCode;
-    public String supName;
-    public String address;
-    public boolean bit;
+    private String supCode;
+    private String supName;
+    private String address;
+    private boolean bit;
 
     public SupplierDTO(String supCode, String supName, String address, boolean bit) {
         this.supCode = supCode;

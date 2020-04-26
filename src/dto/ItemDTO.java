@@ -10,12 +10,12 @@ package dto;
  * @author TruongTN
  */
 public class ItemDTO {
-    public String itemCode;
-    public String itemName;
-    public String supCode;
-    public String unit;
-    public int price;
-    public boolean supplying;
+    private String itemCode;
+    private String itemName;
+    private String supCode;
+    private String unit;
+    private int price;
+    private boolean supplying;
 
     public ItemDTO(String itemCode, String itemName, String supCode, String unit, int price, boolean supplying) {
         this.itemCode = itemCode;

@@ -11,8 +11,6 @@ import dto.ItemDTO;
 import dto.SupplierDTO;
 import java.sql.SQLException;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import utils.MyToys;
@@ -74,7 +72,7 @@ public class Item extends javax.swing.JPanel {
     public void loadItemCode() {
         itemCodeList = new Vector<>();
         for (ItemDTO itemDTO : itemList) {
-            itemCodeList.add(itemDTO.itemCode);
+            itemCodeList.add(itemDTO.getItemCode());
         }
 
     }
@@ -83,14 +81,14 @@ public class Item extends javax.swing.JPanel {
         itemTableView = new Vector();
         for (ItemDTO itemDTO : itemList) {
             for (SupplierDTO supplierDTO : codeAndNameOfSupplierList) {
-                if (itemDTO.supCode.equals(supplierDTO.supCode)) {
+                if (itemDTO.getSupCode().equals(supplierDTO.getSupCode())) {
                     Vector vector = new Vector();
-                    vector.add(itemDTO.itemCode);
-                    vector.add(itemDTO.itemName);
-                    vector.add(itemDTO.supCode + "-" + supplierDTO.supName);
-                    vector.add(itemDTO.unit);
-                    vector.add(itemDTO.price);
-                    vector.add(itemDTO.supplying);
+                    vector.add(itemDTO.getItemCode());
+                    vector.add(itemDTO.getItemName());
+                    vector.add(itemDTO.getSupCode() + "-" + supplierDTO.getSupName());
+                    vector.add(itemDTO.getUnit());
+                    vector.add(itemDTO.getPrice());
+                    vector.add(itemDTO.isSupplying());
 
                     itemTableView.add(vector);
                 }
@@ -107,7 +105,7 @@ public class Item extends javax.swing.JPanel {
             this.cbbSupplier.removeAllItems();
             for (SupplierDTO codeAndName : codeAndNameOfSupplierList) {
 
-                this.cbbSupplier.addItem(codeAndName.supCode + "-" + codeAndName.supName);
+                this.cbbSupplier.addItem(codeAndName.getSupCode() + "-" + codeAndName.getSupName());
             }
         } catch (SQLException ex) {
             System.out.println("Error at loadCodeAndNameOfSupplierOnCbb() method in Item class _ SQLException: " + ex.getMessage());
