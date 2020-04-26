@@ -61,37 +61,36 @@ public class ItemDAO {
         return null;
     }
 
-    public static Vector<String> getSupCode() throws ClassNotFoundException {
-        try {
-            Connection con = MyConnection.openConnection();
-            PreparedStatement ps = con.prepareCall("SELECT supCode From Items");
-            ResultSet rs = ps.executeQuery();
-            Vector<String> supCodeList = new Vector<>();
-            try {
-                con = MyConnection.openConnection();
-                if (con != null) {
+    public static Vector<String> getSupCode() throws SQLException, ClassNotFoundException{
 
-                    while (rs.next()) {
-                        supCodeList.add(rs.getString(1));
-                    }
-                    return supCodeList;
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Vector<String> supCodeList = new Vector<>();
+        try {
+            con = MyConnection.openConnection();
+            if (con != null) {
+                String sql = "Select supCode From Items";
+                ps = con.prepareCall(sql);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    supCodeList.add(rs.getString(1));
                 }
-            } catch (Exception e) {
-            } finally {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                if (con != null) {
-                    ps.close();
-                }
+                return supCodeList;
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            return null;
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
         }
-        return null;
+
     }
 
     public static boolean addItem(String itemCode, String itemName, String supCode, String unit, int price, boolean supplying) throws SQLException, ClassNotFoundException {
@@ -114,11 +113,9 @@ public class ItemDAO {
                 int row = ps.executeUpdate();
                 if (row > 0) {
                     return true;
-                }
-
+                }  
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            return false;
         } finally {
             if (con != null) {
                 con.close();
@@ -126,9 +123,7 @@ public class ItemDAO {
             if (ps != null) {
                 ps.close();
             }
-        }
-
-        return false;
+        } 
     }
 
     public static boolean updateItem(String itemCode, String itemName, String supCode, String unit, int price, boolean supplying) throws SQLException, ClassNotFoundException {
@@ -154,17 +149,16 @@ public class ItemDAO {
                     return true;
                 }
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            return false;
         } finally {
-            if (con != null) {
-                con.close();
-            }
             if (ps != null) {
                 ps.close();
             }
+            if (con != null) {
+                con.close();
+            }
         }
-        return false;
+        
     }
 
     public static boolean deleteItem(String itemCode) throws SQLException, ClassNotFoundException {
@@ -183,16 +177,14 @@ public class ItemDAO {
                     return true;
                 }
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            return false;
         } finally {
-            if (con != null) {
-                con.close();
-            }
             if (ps != null) {
                 ps.close();
             }
+            if (con != null) {
+                con.close();
+            }    
         }
-        return false;
     }
 }

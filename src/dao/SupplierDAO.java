@@ -44,21 +44,23 @@ public class SupplierDAO {
 
     public static Vector<String> loadCodeSupplier() throws SQLException, ClassNotFoundException {
         Connection con = null;
-         Statement st = null;
-         ResultSet rs = null;
+        Statement st = null;
+        ResultSet rs = null;
         Vector codeSupplierList = new Vector();
         try {
             con = MyConnection.openConnection();
-            st = con.createStatement();
-            rs = st.executeQuery("SELECT supCode FROM SUPPLIERS");
             if (con != null) {
+                String sql = "SELECT supCode FROM SUPPLIERS";
+                st = con.createStatement();
+                rs = st.executeQuery(sql);
                 while (rs.next()) {
                     String supCode = rs.getString(1);
 
                     codeSupplierList.add(supCode);
-                }  
+                }
+                return codeSupplierList;
             }
-            return codeSupplierList;
+            return null;
         } finally {
             if (rs != null) {
                 rs.close();
@@ -73,22 +75,37 @@ public class SupplierDAO {
     }
 
     public static Vector loadCodeAndNameOfSuppliers() throws SQLException, ClassNotFoundException {
-        Connection con = MyConnection.openConnection();
-        Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("SELECT supCode, supName FROM SUPPLIERS");
+        Connection con = null;
+        Statement st = null;
+        ResultSet rs = null;
         Vector<SupplierDTO> codeAndNameOfSupplierList = new Vector();
 
         try {
-            while (rs.next()) {
-                String supCode = rs.getString(1);
-                String supName = rs.getString(2);
+            con = MyConnection.openConnection();
+            if (con != null) {
+                String sql = "SELECT supCode, supName FROM SUPPLIERS";
+                st = con.createStatement();
+                rs = st.executeQuery(sql);
+                while (rs.next()) {
+                    String supCode = rs.getString(1);
+                    String supName = rs.getString(2);
 
-                codeAndNameOfSupplierList.add(new SupplierDTO(supCode, supName));
+                    codeAndNameOfSupplierList.add(new SupplierDTO(supCode, supName));
+                }
+                return codeAndNameOfSupplierList;
             }
-            return codeAndNameOfSupplierList;
-        } catch (Exception e) {
+            return null;
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (st != null) {
+                st.close();
+            }
+            if (con != null) {
+                con.close();
+            }
         }
-        return null;
     }
 
     public static boolean addNewSupplier(String supCode, String supName, String address, boolean colloborating) throws SQLException, ClassNotFoundException {
@@ -100,8 +117,8 @@ public class SupplierDAO {
 
             if (con != null) {
                 String sql = "Insert INTO SUPPLIERS (supCode, supName, address, colloborating) VALUES(?, ?, ?, ?)";
-
                 ps = con.prepareCall(sql);
+
                 ps.setString(1, supCode);
                 ps.setString(2, supName);
                 ps.setString(3, address);
@@ -112,6 +129,7 @@ public class SupplierDAO {
                     return true;
                 }
             }
+            return false;
         } finally {
             if (ps != null) {
                 ps.close();
@@ -120,8 +138,6 @@ public class SupplierDAO {
                 con.close();
             }
         }
-
-        return false;
 
     }
 
@@ -134,6 +150,7 @@ public class SupplierDAO {
             if (con != null) {
                 String sql = "UPDATE SUPPLIERS SET supName = ?, address = ?, colloborating = ? WHERE supCode = ?";
                 ps = con.prepareCall(sql);
+
                 ps.setString(1, supName);
                 ps.setString(2, address);
                 ps.setBoolean(3, colloborating);
@@ -144,7 +161,7 @@ public class SupplierDAO {
                     return true;
                 }
             }
-
+            return false;
         } finally {
             if (ps != null) {
                 ps.close();
@@ -153,7 +170,7 @@ public class SupplierDAO {
                 con.close();
             }
         }
-        return false;
+
     }
 
     public static boolean deleteSupplier(String supCode) throws SQLException, ClassNotFoundException {
@@ -165,6 +182,7 @@ public class SupplierDAO {
             if (con != null) {
                 String sql = "DELETE FROM SUPPLIERS WHERE supCode = ?";
                 ps = con.prepareCall(sql);
+                
                 ps.setString(1, supCode);
 
                 int row = ps.executeUpdate();

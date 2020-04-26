@@ -22,13 +22,14 @@ import utils.MyToys;
  * @author TruongTN
  */
 public class Item extends javax.swing.JPanel {
+
     Vector<ItemDTO> itemList = new Vector<>();
     Vector itemTableView = new Vector();
     Vector<SupplierDTO> codeAndNameOfSupplierList;
     Vector<String> itemCodeList;
     Vector<String> headers = new Vector<>();
-    
-    DefaultTableModel tblItemModel = new DefaultTableModel();  
+
+    DefaultTableModel tblItemModel = new DefaultTableModel();
 
     boolean add = true;
     boolean edit = false;
@@ -49,7 +50,7 @@ public class Item extends javax.swing.JPanel {
         loadCodeAndNameOfSupplierOnCbb();
         loadData();
         loadItemCode();
-        
+
         tblItem.updateUI();
 
         showTable();
@@ -63,35 +64,35 @@ public class Item extends javax.swing.JPanel {
                 System.out.println("null");
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.out.println("Error at loadData() method in Item class _ SQLException: " + ex.getMessage());
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Item.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error at loadData() method in Item class _ ClassNotFoundException: " + ex.getMessage());
         }
 
     }
-    
-    public void loadItemCode(){
+
+    public void loadItemCode() {
         itemCodeList = new Vector<>();
         for (ItemDTO itemDTO : itemList) {
             itemCodeList.add(itemDTO.itemCode);
         }
-        
+
     }
 
     public void showTable() {
         itemTableView = new Vector();
         for (ItemDTO itemDTO : itemList) {
-            String suppllier = "";
             for (SupplierDTO supplierDTO : codeAndNameOfSupplierList) {
-                if(itemDTO.supCode.equals(supplierDTO.supCode)){
-                    Vector v = new Vector();
-                    v.add(itemDTO.itemCode);
-                    v.add(itemDTO.itemName);
-                    v.add(itemDTO.supCode + "-" + supplierDTO.supName);
-                    v.add(itemDTO.unit);
-                    v.add(itemDTO.price);
-                    v.add(itemDTO.supplying);
-                    itemTableView.add(v);
+                if (itemDTO.supCode.equals(supplierDTO.supCode)) {
+                    Vector vector = new Vector();
+                    vector.add(itemDTO.itemCode);
+                    vector.add(itemDTO.itemName);
+                    vector.add(itemDTO.supCode + "-" + supplierDTO.supName);
+                    vector.add(itemDTO.unit);
+                    vector.add(itemDTO.price);
+                    vector.add(itemDTO.supplying);
+
+                    itemTableView.add(vector);
                 }
             }
         }
@@ -109,22 +110,22 @@ public class Item extends javax.swing.JPanel {
                 this.cbbSupplier.addItem(codeAndName.supCode + "-" + codeAndName.supName);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Item.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error at loadCodeAndNameOfSupplierOnCbb() method in Item class _ SQLException: " + ex.getMessage());
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Item.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error at loadCodeAndNameOfSupplierOnCbb() method in Item class _ ClassNotFoundException: " + ex.getMessage());
         }
     }
 
-    private boolean checkPrimaryKey(String itemCode){
+    private boolean checkPrimaryKey(String itemCode) {
         for (String string : itemCodeList) {
-            if(itemCode.trim().equals(string)){
+            if (itemCode.trim().equals(string)) {
                 JOptionPane.showMessageDialog(null, "Code must unique");
                 return false;
             }
         }
         return true;
     }
-    
+
     private boolean checkValidation(String itemCode, String itemName, String unit, String price) {
         String errorMsg = "";
         if (!MyToys.checkString(itemCode, ".*", 5)) {
@@ -132,7 +133,7 @@ public class Item extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, errorMsg);
             return false;
         }
-        
+
         if (!MyToys.checkString(itemName, ".*", 50)) {
             errorMsg = "Max length of item name is form 1 to 50 character";
             JOptionPane.showMessageDialog(null, errorMsg);
@@ -362,9 +363,9 @@ public class Item extends javax.swing.JPanel {
                         btnAddNewActionPerformed(evt);
                     }
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    System.out.println("Error at btnSaveActionPerformed() in Item class _ SQLException: " + ex.getMessage());
                 } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(Item.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Error at btnSaveActionPerformed() in Item class _ ClassNotFoundException: " + ex.getMessage());
                 }
             }
         } else if (edit) {
@@ -383,17 +384,20 @@ public class Item extends javax.swing.JPanel {
             }
 
             if (checkValidation(itemCode, itemName, unit, priceStr)) {
-                int price = Integer.parseInt(priceStr);
                 try {
+                    int price = Integer.parseInt(priceStr);
                     if (ItemDAO.updateItem(itemCode, itemName, supCode, unit, price, supplying)) {
                         JOptionPane.showMessageDialog(null, "Edit is sucessful");
                         loadData();
                         showTable();
                         btnAddNewActionPerformed(evt);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (SQLException ex) {
+                    System.out.println("Error at btnSaveActionPerformed() in Item class _ SQLException: " + ex.getMessage());
+                } catch (ClassNotFoundException ex) {
+                    System.out.println("Error at btnSaveActionPerformed() in Item class _ ClassNotFoundException: " + ex.getMessage());
                 }
+
             }
         }
     }//GEN-LAST:event_btnSaveActionPerformed
@@ -404,7 +408,7 @@ public class Item extends javax.swing.JPanel {
             edit = true;
             delete = true;
             add = false;
-            
+
             this.txtItemCode.setText(this.tblItem.getValueAt(row, 0).toString());
             this.txtItemCode.setEnabled(false);
             this.txtItemName.setText(this.tblItem.getValueAt(row, 1).toString());
@@ -426,12 +430,12 @@ public class Item extends javax.swing.JPanel {
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         String itemCode = this.txtItemCode.getText().trim();
-        try {
-            if (delete) {
-                ItemDAO item = new ItemDAO();
-                if (item.deleteItem(itemCode)) {
+
+        if (delete) {
+            try {
+                if (ItemDAO.deleteItem(itemCode)) {
                     JOptionPane.showMessageDialog(null, "Delete sucessful");
-                    
+
                     loadData();
                     loadItemCode();
                     showTable();
@@ -439,10 +443,13 @@ public class Item extends javax.swing.JPanel {
                 } else {
                     JOptionPane.showMessageDialog(null, "Choose row to delete");
                 }
+            } catch (SQLException ex) {
+                System.out.println("Error at btnDeleteActionPerformed() in Item class _ SQLException: " + ex.getMessage());
+            } catch (ClassNotFoundException ex) {
+                System.out.println("Error at btnDeleteActionPerformed() in Item class _ ClassNotFoundException: " + ex.getMessage());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked

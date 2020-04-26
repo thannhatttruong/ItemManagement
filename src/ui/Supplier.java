@@ -63,19 +63,24 @@ public class Supplier extends javax.swing.JPanel {
             allSupCode = new Vector<>();
             allSupCode = SupplierDAO.loadCodeSupplier();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.out.println("Error at loadSupCodeFromSupplier() method in Supplier class _ SQLException: " + ex.getMessage());
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Supplier.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error at loadSupCodeFromSupplier() method in Supplier class _ ClassNotFoundException: " + ex.getMessage());
         }
     }
 
     public void loadSupCodeFromItem() {
+       
         try {
             supCodeUsedList = new Vector();
             supCodeUsedList = ItemDAO.getSupCode();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            System.out.println("Error at loadSupCodeFromItem() method in Supplier class _ SQLException: " + ex.getMessage());
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Error at loadSupCodeFromItem() method in Supplier class _ ClassNotFoundException: " + ex.getMessage());
         }
+       
+        
     }
 
     private boolean checkPrimaryKey(String supCode) {
@@ -298,19 +303,23 @@ public class Supplier extends javax.swing.JPanel {
             }
 
             if (checkValidaton(supCode, supName, address) && checkPrimaryKey(supCode)) {
+                
                 try {
                     if (SupplierDAO.addNewSupplier(supCode, supName, address, colloborating)) {
                         JOptionPane.showMessageDialog(null, "Add supplier is successful");
                         loadData();
                         btnAddNewActionPerformed(evt);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (SQLException ex) {
+                    System.out.println("Error at btnSaveActionPerformed() method in Supplier class _ SQLException: " + ex.getMessage());
+                } catch (ClassNotFoundException ex) {
+                    System.out.println("Error at btnSaveActionPerformed() method in Supplier class _ ClassNotFoundException: " + ex.getMessage());
                 }
+                
             }
-            else{
-                JOptionPane.showMessageDialog(null, "clgt");
-            }
+//            else{
+//                JOptionPane.showMessageDialog(null, "Please try again!!");
+//            }
         } else if (edit) {
             String supCode = this.txtSupCode.getText().trim();
             String supName = this.txtSupName.getText().trim();
@@ -323,6 +332,7 @@ public class Supplier extends javax.swing.JPanel {
             } catch (Exception e) {
             }
             if (checkValidaton(supCode, supName, address)) {
+               
                 try {
                     if (SupplierDAO.updateSupplier(supCode, supName, address, colloborating)) {
                         JOptionPane.showMessageDialog(null, "Update succesful!");
@@ -331,9 +341,12 @@ public class Supplier extends javax.swing.JPanel {
                         tblSupplier.updateUI();
                         btnAddNewActionPerformed(evt);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (SQLException ex) {
+                    System.out.println("Error at btnSaveActionPerformed() method in Supplier class _ SQLException: " + ex.getMessage());
+                } catch (ClassNotFoundException ex) {
+                    System.out.println("Error at btnSaveActionPerformed() method in Supplier class _ ClassNotFoundException: " + ex.getMessage());
                 }
+                
             }
         }
     }//GEN-LAST:event_btnSaveActionPerformed
@@ -366,15 +379,19 @@ public class Supplier extends javax.swing.JPanel {
         String supCodeDelete = this.txtSupCode.getText().trim();
         if (delete) {
             if (checkConstrain(supCodeDelete)) {
+                
                 try {
                     if (SupplierDAO.deleteSupplier(supCodeDelete)) {
                         JOptionPane.showMessageDialog(null, "Delete successful");
                         loadData();
                         btnAddNewActionPerformed(evt);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (SQLException ex) {
+                    System.out.println("Error at btnDeleteActionPerformed() method in Supplier class _ SQLException: " + ex.getMessage());
+                } catch (ClassNotFoundException ex) {
+                    System.out.println("Error at btnDeleteActionPerformed() method in Supplier class _ ClassNotFoundException: " + ex.getMessage());
                 }
+                
             } else {
                 JOptionPane.showMessageDialog(null, "Cannot delete. Violate reference");
             }
